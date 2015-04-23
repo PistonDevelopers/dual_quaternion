@@ -1,0 +1,10 @@
+[package]
+name = "dual_quaternion"
+version = "0.1.0"
+authors = ["Steve Jahns <s.t.jahns@gmail.com>"]
+
+[dependencies.vecmath]
+git = "https://github.com/pistondevelopers/vecmath"
+
+[dependencies.quaternion]
+git = "https://github.com/pistondevelopers/quaternion"
