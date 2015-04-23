@@ -36,18 +36,56 @@ pub fn from_rotation_and_translation<T: Float>(rotation: Quaternion<T>, translat
     )
 }
 
+/// Adds two dual-quaternions
+#[inline(always)]
+pub fn add<T: Float>(a: DualQuaternion<T>, b: DualQuaternion<T>) -> DualQuaternion<T> {
+    (
+        quaternion::add(a.0, b.0),
+        quaternion::add(a.1, b.1)
+    )
+}
+
 /// Multiplies two dual-quaternions
 #[inline(always)]
-pub fn mul<T: Float>(
-    a: DualQuaternion<T>,
-    b: DualQuaternion<T>
-) -> DualQuaternion<T> {
+pub fn mul<T: Float>(a: DualQuaternion<T>, b: DualQuaternion<T>) -> DualQuaternion<T> {
     (
         quaternion::mul(b.0, a.0),
         quaternion::add(
             quaternion::mul(b.1, a.0),
             quaternion::mul(b.0, a.1)
         )
+    )
+}
+
+/// Scales a dual-quaternion (element-wise) by a scalar
+#[inline(always)]
+pub fn scale<T: Float>(q: DualQuaternion<T>, t: T) -> DualQuaternion<T>
+{
+    (quaternion::scale(q.0, t), quaternion::scale(q.1, t))
+}
+
+/// Returns the dual-quaternion conjugate
+#[inline(always)]
+pub fn conj<T: Float>(q: DualQuaternion<T>) -> DualQuaternion<T> {
+    (
+        quaternion::conj(q.0),
+        quaternion::conj(q.1)
+    )
+}
+
+/// Dot product of two dual-quaternions
+#[inline(always)]
+pub fn dot<T: Float>(a: DualQuaternion<T>, b: DualQuaternion<T>) -> T {
+    quaternion::dot(a.0, b.0)
+}
+
+/// Normalizes a dual-quaternion
+pub fn normalize<T: Float>(q: DualQuaternion<T>) -> DualQuaternion<T> {
+    let _1 = T::one();
+    let len = dot(q, q);
+    (
+        quaternion::scale(q.0, _1 / len),
+        quaternion::scale(q.1, _1 / len),
     )
 }
 
@@ -155,6 +193,28 @@ mod test {
         assert!((rotate_test_1[1] - rotate_test_2[1]).abs() < EPSILON);
         assert!((rotate_test_1[2] - rotate_test_2[2]).abs() < EPSILON);
 
+    }
+
+    #[test]
+    fn test_mul_conj() {
+        let r = quaternion::euler_angles(PI, PI, PI);
+        let t = [1.0, 2.0, 3.0];
+
+        let dq = super::from_rotation_and_translation(r, t);
+        let dq_conj = super::conj(dq);
+
+        let dq_prime = super::mul(dq, dq_conj);
+        let r_prime = super::get_rotation(dq_prime);
+        let t_prime = super::get_translation(dq_prime);
+
+        assert!((t_prime[0] - 0.0).abs() < EPSILON);
+        assert!((t_prime[1] - 0.0).abs() < EPSILON);
+        assert!((t_prime[2] - 0.0).abs() < EPSILON);
+
+        assert!((r_prime.0 - 1.0).abs() < EPSILON);
+        assert!((r_prime.1[0] - 0.0).abs() < EPSILON);
+        assert!((r_prime.1[1] - 0.0).abs() < EPSILON);
+        assert!((r_prime.1[2] - 0.0).abs() < EPSILON);
     }
 
 }
