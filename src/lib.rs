@@ -36,6 +36,15 @@ pub fn from_rotation_and_translation<T: Float>(rotation: Quaternion<T>, translat
     )
 }
 
+/// Adds two dual-quaternions
+#[inline(always)]
+pub fn add<T: Float>(a: DualQuaternion<T>, b: DualQuaternion<T>) -> DualQuaternion<T> {
+    (
+        quaternion::add(a.0, b.0),
+        quaternion::add(a.1, b.1)
+    )
+}
+
 /// Multiplies two dual-quaternions
 #[inline(always)]
 pub fn mul<T: Float>(a: DualQuaternion<T>, b: DualQuaternion<T>) -> DualQuaternion<T> {
@@ -48,12 +57,35 @@ pub fn mul<T: Float>(a: DualQuaternion<T>, b: DualQuaternion<T>) -> DualQuaterni
     )
 }
 
+/// Scales a dual-quaternion (element-wise) by a scalar
+#[inline(always)]
+pub fn scale<T: Float>(q: DualQuaternion<T>, t: T) -> DualQuaternion<T>
+{
+    (quaternion::scale(q.0, t), quaternion::scale(q.1, t))
+}
+
 /// Returns the dual-quaternion conjugate
 #[inline(always)]
 pub fn conj<T: Float>(q: DualQuaternion<T>) -> DualQuaternion<T> {
     (
         quaternion::conj(q.0),
         quaternion::conj(q.1)
+    )
+}
+
+/// Dot product of two dual-quaternions
+#[inline(always)]
+pub fn dot<T: Float>(a: DualQuaternion<T>, b: DualQuaternion<T>) -> T {
+    quaternion::dot(a.0, b.0)
+}
+
+/// Normalizes a dual-quaternion
+pub fn normalize<T: Float>(q: DualQuaternion<T>) -> DualQuaternion<T> {
+    let _1 = T::one();
+    let len = dot(q, q);
+    (
+        quaternion::scale(q.0, _1 / len),
+        quaternion::scale(q.1, _1 / len),
     )
 }
 
