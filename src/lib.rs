@@ -81,11 +81,13 @@ pub fn dot<T: Float>(a: DualQuaternion<T>, b: DualQuaternion<T>) -> T {
 
 /// Normalizes a dual-quaternion
 pub fn normalize<T: Float>(q: DualQuaternion<T>) -> DualQuaternion<T> {
-    let _1 = T::one();
-    let len = dot(q, q);
+    let real_len_recip = T::one() / dot(q, q).sqrt();
     (
-        quaternion::scale(q.0, _1 / len),
-        quaternion::scale(q.1, _1 / len),
+        quaternion::scale(q.0, real_len_recip),
+        quaternion::add(
+            quaternion::scale(q.1, real_len_recip),
+            quaternion::scale(q.0, -quaternion::dot(q.0, q.1))
+        )
     )
 }
 
