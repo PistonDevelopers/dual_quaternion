@@ -49,10 +49,10 @@ pub fn add<T: Float>(a: DualQuaternion<T>, b: DualQuaternion<T>) -> DualQuaterni
 #[inline(always)]
 pub fn mul<T: Float>(a: DualQuaternion<T>, b: DualQuaternion<T>) -> DualQuaternion<T> {
     (
-        quaternion::mul(b.0, a.0),
+        quaternion::mul(a.0, b.0),
         quaternion::add(
-            quaternion::mul(b.1, a.0),
-            quaternion::mul(b.0, a.1)
+            quaternion::mul(a.0, b.1),
+            quaternion::mul(a.1, b.0)
         )
     )
 }
