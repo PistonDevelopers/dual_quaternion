@@ -139,32 +139,36 @@ mod test {
     #[test]
     fn test_mul_rotations() {
 
-        let r1 = quaternion::euler_angles(PI / 2.0, PI, PI);
-        let r2 = quaternion::euler_angles(PI / 2.0, -PI, 0.0);
+        // rotate 90 degrees about Y
+        let r1 = quaternion::euler_angles(0.0, PI / 2.0, 0.0);
 
-        let t1 = [0.0, 0.0, 0.0];
-        let t2 = [0.0, 0.0, 0.0];
+        // rotate 90 degrees about Z
+        let r2 = quaternion::euler_angles(0.0, 0.0, PI / 2.0);
 
-        let dq1 = super::from_rotation_and_translation(r1, t1);
-        let dq2 = super::from_rotation_and_translation(r2, t2);
-        let dq3 = super::mul(dq1, dq2);
+        // rotate 90 degrees about X
+         let r3 = quaternion::euler_angles(PI / 2.0, 0.0, 0.0);
 
-        let r_prime = super::get_rotation(dq3);
-        let t_prime = super::get_translation(dq3);
+        let dq1 = super::from_rotation_and_translation(r1, [0.0, 0.0, 0.0]);
+        let dq2 = super::from_rotation_and_translation(r2, [0.0, 0.0, 0.0]);
+        let dq3 = super::from_rotation_and_translation(r3, [0.0, 0.0, 0.0]);
+        let dq4 = super::mul(super::mul(dq1, dq2), dq3);
 
-        let r_expected = quaternion::euler_angles(PI, 0.0, PI);
+        let r_prime = super::get_rotation(dq4);
+        let t_prime = super::get_translation(dq4);
+
         let t_expected = [0.0, 0.0, 0.0];
-
         assert!((t_prime[0] - t_expected[0]).abs() < EPSILON);
         assert!((t_prime[1] - t_expected[1]).abs() < EPSILON);
         assert!((t_prime[2] - t_expected[2]).abs() < EPSILON);
 
-        let rotate_test_1 = quaternion::rotate_vector(r_prime, [1.0, 1.0, 1.0]);
-        let rotate_test_2 = quaternion::rotate_vector(r_expected, [1.0, 1.0, 1.0]);
+        let rotate_test = quaternion::rotate_vector(r_prime, [1.0, 0.0, 0.0]);
+        let expected = [0.0, 1.0, 0.0];
 
-        assert!((rotate_test_1[0] - rotate_test_2[0]).abs() < EPSILON);
-        assert!((rotate_test_1[1] - rotate_test_2[1]).abs() < EPSILON);
-        assert!((rotate_test_1[2] - rotate_test_2[2]).abs() < EPSILON);
+        println!("{:?}", rotate_test);
+
+        assert!((rotate_test[0] - expected[0]).abs() < EPSILON);
+        assert!((rotate_test[1] - expected[1]).abs() < EPSILON);
+        assert!((rotate_test[2] - expected[2]).abs() < EPSILON);
 
     }
 
