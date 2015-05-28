@@ -1,10 +1,21 @@
 [package]
+
 name = "dual_quaternion"
 version = "0.1.0"
 authors = ["Steve Jahns <s.t.jahns@gmail.com>"]
+keywords = ["dual", "quaternion", "math", "piston"]
+description = "A type-agnostic dual-quaternion math library"
+license = "MIT"
+readme = "README.md"
+repository = "https://github.com/PistonDevelopers/dual_quaternion"
+homepage = "https://github.com/PistonDevelopers/dual_quaternion"
 
-[dependencies.vecmath]
-git = "https://github.com/pistondevelopers/vecmath"
+[lib]
 
-[dependencies.quaternion]
-git = "https://github.com/pistondevelopers/quaternion"
+name = "dual_quaternion"
+path = "src/lib.rs"
+
+[dependencies]
+
+vecmath = "*"
+quaternion = "*"
