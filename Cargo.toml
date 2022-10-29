@@ -17,5 +17,5 @@ path = "src/lib.rs"
 
 [dependencies]
 
-vecmath = "*"
-quaternion = "*"
+vecmath = "1.0.0"
+quaternion = "0.4.1"
